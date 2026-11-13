@@ -190,7 +190,6 @@ INT8U MCP_CAN::mcp2515_setCANCTRL_Mode(const INT8U newmode)
 
 		if(mcp2515_requestNewMode(MCP_LISTENONLY) != MCP2515_OK)
 			return MCP2515_FAIL;
-
 		// Turn wake interrupt back off if it was originally off
 		if(!wakeIntEnabled)
 			mcp2515_modifyRegister(MCP_CANINTE, MCP_WAKIF, 0);

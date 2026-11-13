@@ -91,6 +91,7 @@ void setup() {
   }
   else{
     Serial.println("Error: CAN init.");
+    CAN0.setMode(MCP_NORMAL);
   }
 
   //placeholders
@@ -102,15 +103,17 @@ void setup() {
 }
 
 void loop() {
-  Serial.println("here.");
-
   //send out messages
   if(loop_cnt % send_can_loop_freq == 0){
     CAN0.sendMsgBuf(id_TRAC_STATUS,len_TRAC_STATUS,data_trac_nofail); //0x212
+    Serial.println("ABS/DSC Data (0x212) sent.");
     assemble_rpm_speed(txBuf);
     CAN0.sendMsgBuf(id_RPM_SPEED,len_RPM_SPEED,txBuf); //0x201
+    Serial.println("Engine Data (0x201) sent.");
     assemble_steering_angle(txBuf);
     CAN0.sendMsgBuf(id_STEERING_ANGLE,len_STEERING_ANGLE,txBuf); //0x81
+    Serial.println("Steering angle Data (0x81) sent.");
+
   }
 
 
