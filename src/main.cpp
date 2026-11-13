@@ -3,7 +3,6 @@
 #include <Arduino.h>
 #include <SPI.h>
 #include "mcp_can.h"
-#include <math.h>
 
 
 //Pins:
