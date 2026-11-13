@@ -53,6 +53,7 @@ MCP_CAN CAN0(10); //SPI Chip Select for MCP2515
 
 
 unsigned short steering_angle; //0 = right, 100 = left.
+unsigned short steering_center = 50U;
 unsigned short rpm;
 unsigned short tps; //0-200 in .5% increments.
 unsigned short vss_kph;
@@ -80,6 +81,8 @@ void assemble_rpm_speed(byte* buf);
 void clearTransferBuffer(byte* buf,unsigned int len);
 
 void setup() {
+
+  pinMode(LED_BUILTIN,OUTPUT);
   // put your setup code here, to run once:
   Serial.begin(115200);
 
@@ -120,10 +123,11 @@ void loop() {
 
     switch(receiveID){
       case id_EPS_STATUS: // receive 0x300.
-      signalEPSFault(rxBuf[0]);
+        signalEPSFault(rxBuf[0]);
+        break;
       default:
       //ignore other IDS.
-        break;
+      break;
     }
   }
   delay(50);
@@ -139,7 +143,7 @@ void clearTransferBuffer(byte* buf,unsigned int len){
 
 // parses EPS status message and illuminates onboard LED on fault.
 void signalEPSFault(byte can_data){
-  eps_error = can_data && mask_EPS_FAIL; 
+  eps_error = can_data & mask_EPS_FAIL; 
   eps_error? digitalWrite(LED_BUILTIN,HIGH) : digitalWrite(LED_BUILTIN,LOW); // illuminate onboard LED based on fail signal received from EPS ECU.
 }
 
@@ -150,7 +154,7 @@ void assemble_steering_angle(byte* buf){
 
   uint16_t dataSteeringAngle = (uint32_t(0xFDE1 - 0x021E) * steering_angle / 100) + 0x021E;// rescale steering angle to the specified range.
   buf[0] = 0x00U;
-  if(abs(steering_angle - 100) <= STEERING_ANGLE_EPSILON){
+  if(steering_center - STEERING_ANGLE_EPSILON <= steering_angle && steering_center + STEERING_ANGLE_EPSILON >= steering_angle){ //check for center position, with deadzone
     buf[1] = 0xEFU;
   }
   else{
