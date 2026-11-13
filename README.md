@@ -8,4 +8,4 @@ Code is untested for now.
 **DO NOT USE ON PUBLIC ROADS**
 
 
-Project is based on PlatformIO.
+Project uses PlatformIO.
