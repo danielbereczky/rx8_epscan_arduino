@@ -91,7 +91,6 @@ void setup() {
   }
   else{
     Serial.println("Error: CAN init.");
-    CAN0.setMode(MCP_NORMAL);
   }
 
   //placeholders
